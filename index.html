@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Buku Kas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        </svg>
+        <span id="brandTitle">Buku Kas</span>
+        <button id="renameBtn" onclick="openNameForm(true)" aria-label="Ubah nama" style="background: none; border: none; color: var(--ink-faint); cursor: pointer; padding: 4px; margin-left: 2px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+            <path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+          </svg>
+        </button>
+      </header>
+
+      <section class="hero">
+        <div class="hero-row">
+          <div>
+            <div class="hero-label">Saldo total</div>
+            <div id="totalBalance" class="serif mono hero-balance">Rp0</div>
+          </div>
+          <div class="hero-stats">
+            <div>
+              <div class="hero-stat-label" style="color: var(--income)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M23 6l-9.5 9.5-5-5L1 18" />
+                  <path d="M17 6h6v6" />
+                </svg>
+                Pemasukan bulan ini
+              </div>
+              <div id="allIncome" class="mono hero-stat-val">Rp0</div>
+            </div>
+            <div>
+              <div class="hero-stat-label" style="color: var(--expense)">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M23 18l-9.5-9.5-5 5L1 6" />
+                  <path d="M17 18h6v-6" />
+                </svg>
+                Pengeluaran bulan ini
+              </div>
+              <div id="allExpense" class="mono hero-stat-val">Rp0</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="toolbar">
+        <div class="tabs">
+          <button class="tab-btn active" id="tabHarian" onclick="setTab('harian')">Harian</button>
+          <button class="tab-btn" id="tabMingguan" onclick="setTab('mingguan')">Mingguan</button>
+          <button class="tab-btn" id="tabBulanan" onclick="setTab('bulanan')">Bulanan</button>
+          <button class="tab-btn" id="tabHistory" onclick="setTab('history')">History</button>
+        </div>
+        <button class="btn-gold" id="addTxBtn" onclick="openAddForm()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" /></svg>
+          Catat transaksi
+        </button>
+      </div>
+
+      <!-- PANEL: HARIAN / MINGGUAN / BULANAN (struktur sama, sumber data beda) -->
+      <section class="panel" id="panelHarian">
+        <div class="section-label">Kategori bulan ini</div>
+        <div id="catHarian"></div>
+        <div class="section-label">Catatan transaksi harian bulan ini</div>
+        <div id="ledgerHarian"></div>
+      </section>
+
+      <section class="panel" id="panelMingguan" style="display: none">
+        <div class="section-label">Kategori bulan ini</div>
+        <div id="catMingguan"></div>
+        <div class="section-label">Catatan transaksi mingguan bulan ini</div>
+        <div id="ledgerMingguan"></div>
+      </section>
+
+      <section class="panel" id="panelBulanan" style="display: none">
+        <div class="section-label">Kategori bulan ini</div>
+        <div id="catBulanan"></div>
+        <div class="section-label">Catatan transaksi bulanan bulan ini</div>
+        <div id="ledgerBulanan"></div>
+      </section>
+
+      <!-- PANEL: HISTORY -->
+      <section class="panel" id="panelHistory" style="display: none">
+        <div class="subtabs">
+          <button class="subtab-btn active" id="subtabCalendar" onclick="setHistorySubView('calendar')">Kalender</button>
+          <button class="subtab-btn" id="subtabMonths" onclick="setHistorySubView('months')">12 Bulan</button>
+        </div>
+
+        <div id="calendarView">
+          <div class="period-nav">
+            <button class="btn-ghost" onclick="historyCalPrev()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6" /></svg>
+            </button>
+            <div class="period-title">
+              <div class="lbl" id="historyCalLabel"></div>
+              <button onclick="historyCalToday()">kembali ke bulan ini</button>
+            </div>
+            <button class="btn-ghost" onclick="historyCalNext()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6" /></svg>
+            </button>
+          </div>
+          <div class="cal-weekday-row">
+            <div>Sen</div>
+            <div>Sel</div>
+            <div>Rab</div>
+            <div>Kam</div>
+            <div>Jum</div>
+            <div>Sab</div>
+            <div>Min</div>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+          <div id="dateDetail" style="margin-top: 20px"></div>
+        </div>
+
+        <div id="monthsView" style="display: none">
+          <div class="period-nav">
+            <button class="btn-ghost" onclick="historyMonthsPrevYear()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6" /></svg>
+            </button>
+            <div class="period-title">
+              <div class="lbl" id="historyYearLabel"></div>
+            </div>
+            <button class="btn-ghost" onclick="historyMonthsNextYear()">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6" /></svg>
+            </button>
+          </div>
+          <div class="month-grid" id="monthsGrid"></div>
+          <div id="monthDetail" style="margin-top: 20px"></div>
+        </div>
+      </section>
+
+      <footer class="site-footer">&copy; <span id="footerYear"></span> Buku Kas. Seluruh hak cipta dilindungi.@agiisss._</footer>
+    </div>
+
+    <div class="modal-overlay" id="nameOverlay">
+      <form class="modal" id="nameForm" onsubmit="handleNameSubmit(event)">
+        <div class="modal-head">
+          <div class="t serif" id="nameModalTitle">Selamat datang</div>
+          <button type="button" id="nameCloseBtn" onclick="closeNameForm()" style="display: none">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <p id="nameModalDesc" style="font-size: 13px; color: var(--ink-muted); margin: 0 0 16px">Siapa nama pemilik buku kas ini?</p>
+        <div class="field">
+          <label>Nama</label>
+          <input type="text" placeholder="contoh: Prabowo" id="fName" maxlength="30" autocomplete="off" />
+        </div>
+        <div class="form-error" id="nameError"></div>
+        <button type="submit" class="btn-gold" style="width: 100%; justify-content: center">Mulai catat</button>
+      </form>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="if (event.target === this) closeForm();">
+      <form class="modal" id="txForm" onsubmit="handleSubmit(event)">
+        <div class="modal-head">
+          <div class="t" id="modalTitle">Catat transaksi</div>
+          <button type="button" onclick="closeForm()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+          </button>
+        </div>
+
+        <div class="type-toggle">
+          <button type="button" class="expense active" id="btnTypeExpense" onclick="setFormType('expense')">Pengeluaran</button>
+          <button type="button" class="income" id="btnTypeIncome" onclick="setFormType('income')">Pemasukan</button>
+        </div>
+
+        <div class="field">
+          <label>Jumlah (Rp)</label>
+          <input type="number" min="0" placeholder="50000" id="fAmount" />
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Kategori</label>
+            <select id="fCategory"></select>
+          </div>
+          <div class="field">
+            <label>Tanggal</label>
+            <input type="date" id="fDate" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Catatan (opsional)</label>
+          <input type="text" placeholder="contoh: makan siang kantor" id="fNote" />
+        </div>
+
+        <div class="form-error" id="formError"></div>
+
+        <button type="submit" class="btn-gold" style="width: 100%; justify-content: center" id="submitBtn">Simpan</button>
+      </form>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
