@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light" />
     <meta name="theme-color" content="#FBF8F1" />
-    <title>Buku Kas</title>
+    <title>Buku Kas — Jurnal Keuangan</title>
     <link rel="icon" type="image/png" href="aset/Logo.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
@@ -156,7 +156,7 @@
         </div>
       </section>
 
-      <footer class="site-footer">&copy; <span id="footerYear"></span> Buku Kas. Seluruh hak cipta dilindungi.</footer>
+      <footer class="site-footer">&copy; <span id="footerYear"></span> Buku Kas. Seluruh hak cipta dilindungi.@agiisss._</footer>
     </div>
 
     <div class="modal-overlay" id="nameOverlay">
@@ -170,7 +170,11 @@
         <p id="nameModalDesc" style="font-size: 13px; color: var(--ink-muted); margin: 0 0 16px">Siapa nama pemilik buku kas ini?</p>
         <div class="field">
           <label>Nama</label>
-          <input type="text" placeholder="contoh: Dewi" id="fName" maxlength="30" autocomplete="off" />
+          <input type="text" placeholder="contoh: Gibran" id="fName" maxlength="30" autocomplete="off" />
+        </div>
+        <div class="field" id="startBalanceFieldWrap" style="display: none">
+          <label>Saldo saat ini (Rp) &mdash; opsional</label>
+          <input type="number" min="0" placeholder="1000000" id="fNameStartBalance" />
         </div>
         <div class="form-error" id="nameError"></div>
         <button type="submit" class="btn-gold" style="width: 100%; justify-content: center">Mulai catat</button>

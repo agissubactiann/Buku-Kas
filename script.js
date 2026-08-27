@@ -107,8 +107,13 @@ function openNameForm(isRename) {
   document.getElementById("fName").value = isRename ? userName : "";
   document.getElementById("nameError").style.display = "none";
   document.getElementById("nameModalTitle").textContent = isRename ? "Ubah nama" : "Selamat datang";
-  document.getElementById("nameModalDesc").textContent = isRename ? "Ganti nama pemilik buku kas ini." : "Siapa nama pemilik buku kas ini?";
+  document.getElementById("nameModalDesc").textContent = isRename
+    ? "Hayoo... Mau Ganti Nama Yahh..?"
+    : "Siapa nama pemilik buku kas ini? Sekalian catat saldo yang sudah kamu punya sekarang biar Saldo Total langsung akurat (boleh dilewati).";
   document.getElementById("nameCloseBtn").style.display = isRename ? "block" : "none";
+  const showBalanceField = !isRename && !balanceSet;
+  document.getElementById("startBalanceFieldWrap").style.display = showBalanceField ? "block" : "none";
+  document.getElementById("fNameStartBalance").value = startingBalance || "";
   document.getElementById("nameOverlay").classList.add("open");
 }
 function closeNameForm() {
@@ -126,8 +131,21 @@ function handleNameSubmit(e) {
     return;
   }
   saveName(val);
+
+  const balanceFieldShown = document.getElementById("startBalanceFieldWrap").style.display !== "none";
+  if (balanceFieldShown) {
+    const raw = document.getElementById("fNameStartBalance").value;
+    const bVal = raw === "" ? 0 : parseFloat(raw);
+    if (isNaN(bVal) || bVal < 0) {
+      errEl.textContent = "Saldo yang dimasukkan tidak valid.";
+      errEl.style.display = "block";
+      shakeEl(errEl);
+      return;
+    }
+    saveBalance(bVal);
+  }
+
   document.getElementById("nameOverlay").classList.remove("open");
-  if (!balanceSet) openBalanceForm(true);
 }
 
 /* ---------- saldo awal ---------- */
