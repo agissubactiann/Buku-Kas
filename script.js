@@ -7,8 +7,12 @@ const MONTH_LABELS = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "J
 const MONTH_SHORT = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 const STORAGE_KEY = "buku-kas-transactions";
 const NAME_KEY = "buku-kas-username";
+const BALANCE_KEY = "buku-kas-saldo-awal";
+const BALANCE_SET_KEY = "buku-kas-saldo-set";
 
 let userName = "";
+let startingBalance = 0;
+let balanceSet = false;
 let transactions = [];
 
 let activeTab = "harian"; // harian | mingguan | bulanan | history
@@ -102,8 +106,8 @@ function updateBrandTitle() {
 function openNameForm(isRename) {
   document.getElementById("fName").value = isRename ? userName : "";
   document.getElementById("nameError").style.display = "none";
-  document.getElementById("nameModalTitle").textContent = isRename ? "Ubah nama" : "Selamat datang bgst";
-  document.getElementById("nameModalDesc").textContent = isRename ? "Hayoo.. Mau Ganti Nama yah..?." : "Siapa nama pemilik buku kas ini?";
+  document.getElementById("nameModalTitle").textContent = isRename ? "Ubah nama" : "Selamat datang";
+  document.getElementById("nameModalDesc").textContent = isRename ? "Ganti nama pemilik buku kas ini." : "Siapa nama pemilik buku kas ini?";
   document.getElementById("nameCloseBtn").style.display = isRename ? "block" : "none";
   document.getElementById("nameOverlay").classList.add("open");
 }
@@ -116,12 +120,74 @@ function handleNameSubmit(e) {
   const val = document.getElementById("fName").value.trim();
   const errEl = document.getElementById("nameError");
   if (!val) {
-    errEl.textContent = "Masukin Nama dulu bgst.";
+    errEl.textContent = "Masukkan nama dulu ya.";
     errEl.style.display = "block";
+    shakeEl(errEl);
     return;
   }
   saveName(val);
   document.getElementById("nameOverlay").classList.remove("open");
+  if (!balanceSet) openBalanceForm(true);
+}
+
+/* ---------- saldo awal ---------- */
+function loadBalance() {
+  try {
+    const v = localStorage.getItem(BALANCE_KEY);
+    startingBalance = v !== null ? parseFloat(v) : 0;
+    balanceSet = localStorage.getItem(BALANCE_SET_KEY) === "true";
+  } catch (e) {
+    startingBalance = 0;
+    balanceSet = false;
+  }
+}
+function saveBalance(val) {
+  startingBalance = val;
+  balanceSet = true;
+  try {
+    localStorage.setItem(BALANCE_KEY, String(val));
+    localStorage.setItem(BALANCE_SET_KEY, "true");
+  } catch (e) {
+    console.error("Gagal menyimpan saldo awal", e);
+  }
+  renderCurrentView();
+}
+function openBalanceForm(isOnboarding) {
+  document.getElementById("fStartBalance").value = startingBalance || "";
+  document.getElementById("balanceError").style.display = "none";
+  document.getElementById("balanceSkipBtn").style.display = isOnboarding ? "block" : "none";
+  document.getElementById("balanceCloseBtn").style.display = isOnboarding ? "none" : "block";
+  document.getElementById("balanceModalTitle").textContent = isOnboarding ? "Saldo rekening saat ini" : "Atur saldo awal";
+  document.getElementById("balanceOverlay").classList.add("open");
+}
+function closeBalanceForm() {
+  document.getElementById("balanceOverlay").classList.remove("open");
+}
+function skipBalance() {
+  saveBalance(startingBalance || 0);
+  closeBalanceForm();
+}
+function handleBalanceSubmit(e) {
+  e.preventDefault();
+  const raw = document.getElementById("fStartBalance").value;
+  const val = raw === "" ? 0 : parseFloat(raw);
+  const errEl = document.getElementById("balanceError");
+  if (isNaN(val) || val < 0) {
+    errEl.textContent = "Masukkan angka yang valid.";
+    errEl.style.display = "block";
+    shakeEl(errEl);
+    return;
+  }
+  saveBalance(val);
+  closeBalanceForm();
+}
+
+/* ---------- modal bantuan ---------- */
+function openHelpModal() {
+  document.getElementById("helpOverlay").classList.add("open");
+}
+function closeHelpModal() {
+  document.getElementById("helpOverlay").classList.remove("open");
 }
 
 /* ---------- data storage ---------- */
@@ -163,8 +229,8 @@ function renderCurrentView() {
 }
 
 function renderTotalBalance() {
-  // Saldo total: akumulasi sepanjang waktu, TIDAK reset tiap bulan
-  const totalBalance = transactions.reduce((s, t) => s + (t.type === "income" ? t.amount : -t.amount), 0);
+  // Saldo total: saldo awal + akumulasi transaksi sepanjang waktu, TIDAK reset tiap bulan
+  const totalBalance = startingBalance + transactions.reduce((s, t) => s + (t.type === "income" ? t.amount : -t.amount), 0);
 
   // Pemasukan & pengeluaran: hanya bulan berjalan, otomatis reset tiap ganti bulan
   const now = new Date();
@@ -615,12 +681,17 @@ function generateCurveSvg(txArray, year, month) {
 function init() {
   loadName();
   updateBrandTitle();
+  loadBalance();
   loadData();
   historySelectedDate = null;
   setFormType("expense");
   document.getElementById("fDate").value = todayISO();
   document.getElementById("footerYear").textContent = new Date().getFullYear();
   setTab("harian");
-  if (!userName) openNameForm(false);
+  if (!userName) {
+    openNameForm(false);
+  } else if (!balanceSet) {
+    openBalanceForm(true);
+  }
 }
 init();

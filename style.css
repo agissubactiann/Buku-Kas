@@ -1041,3 +1041,106 @@ svg text {
     font-size: 12px;
   }
 }
+
+/* === Header baru: kiri (brand) & kanan (bantuan) === */
+header {
+  justify-content: space-between;
+}
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.help-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--surface);
+  border: 2px solid var(--border);
+  color: var(--ink);
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 7px 12px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--border);
+  transition:
+    transform 0.08s,
+    box-shadow 0.08s;
+}
+.help-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--border);
+}
+
+/* === Baris label Saldo Total + tombol atur saldo awal === */
+.hero-label-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.hero-label-row .hero-label {
+  margin-bottom: 0;
+}
+.btn-mini {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  color: var(--ink);
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 3px 9px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 var(--border);
+  transition:
+    transform 0.08s,
+    box-shadow 0.08s;
+}
+.btn-mini:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--border);
+}
+
+/* === Konten modal bantuan === */
+.help-item {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--border);
+}
+.help-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+.help-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+  color: var(--accent-dim);
+}
+.help-text {
+  font-size: 13px;
+  color: var(--ink-muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 640px) {
+  header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .help-btn span {
+    display: none;
+  }
+  .hero-label-row {
+    gap: 6px;
+  }
+}
