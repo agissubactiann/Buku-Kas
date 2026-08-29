@@ -1,6 +1,6 @@
 const CATEGORIES = {
   income: ["Gaji", "Bonus", "Usaha", "Investasi", "Lainnya"],
-  expense: ["Makanan", "Transportasi", "Belanja", "Tagihan", "Liburan", "Kesehatan", "Pendidikan", "Lainnya"],
+  expense: ["Makanan", "Transportasi", "Belanja", "Tagihan", "Hiburan", "Kesehatan", "Pendidikan", "Lainnya"],
 };
 const DAY_LABELS = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
 const MONTH_LABELS = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
@@ -115,6 +115,9 @@ function openNameForm(isRename) {
   document.getElementById("startBalanceFieldWrap").style.display = showBalanceField ? "block" : "none";
   document.getElementById("fNameStartBalance").value = startingBalance || "";
   document.getElementById("nameOverlay").classList.add("open");
+  setTimeout(() => {
+    document.getElementById("fName").focus();
+  }, 320);
 }
 function closeNameForm() {
   if (!userName) return;
@@ -177,6 +180,9 @@ function openBalanceForm(isOnboarding) {
   document.getElementById("balanceCloseBtn").style.display = isOnboarding ? "none" : "block";
   document.getElementById("balanceModalTitle").textContent = isOnboarding ? "Saldo rekening saat ini" : "Atur saldo awal";
   document.getElementById("balanceOverlay").classList.add("open");
+  setTimeout(() => {
+    document.getElementById("fStartBalance").focus();
+  }, 320);
 }
 function closeBalanceForm() {
   document.getElementById("balanceOverlay").classList.remove("open");
@@ -335,6 +341,9 @@ function openAddForm() {
   document.getElementById("fNote").value = "";
   document.getElementById("formError").style.display = "none";
   document.getElementById("modalOverlay").classList.add("open");
+  setTimeout(() => {
+    document.getElementById("fAmount").focus();
+  }, 320);
 }
 function openEditForm(id) {
   const tx = transactions.find((t) => t.id === id);
