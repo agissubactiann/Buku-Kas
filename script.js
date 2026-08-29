@@ -1,6 +1,6 @@
 const CATEGORIES = {
   income: ["Gaji", "Bonus", "Usaha", "Investasi", "Lainnya"],
-  expense: ["Makanan", "Transportasi", "Belanja", "Tagihan", "Hiburan", "Kesehatan", "Pendidikan", "Lainnya"],
+  expense: ["Makanan", "Transportasi", "Belanja", "Tagihan", "Liburan", "Kesehatan", "Pendidikan", "Lainnya"],
 };
 const DAY_LABELS = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
 const MONTH_LABELS = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
@@ -108,7 +108,7 @@ function openNameForm(isRename) {
   document.getElementById("nameError").style.display = "none";
   document.getElementById("nameModalTitle").textContent = isRename ? "Ubah nama" : "Selamat datang";
   document.getElementById("nameModalDesc").textContent = isRename
-    ? "Hayoo... Mau Ganti Nama Yahh..?"
+    ? "Hayoo... Mau Ganti Nama Lagi Yahh...?"
     : "Siapa nama pemilik buku kas ini? Sekalian catat saldo yang sudah kamu punya sekarang biar Saldo Total langsung akurat (boleh dilewati).";
   document.getElementById("nameCloseBtn").style.display = isRename ? "block" : "none";
   const showBalanceField = !isRename && !balanceSet;
@@ -713,3 +713,9 @@ function init() {
   }
 }
 init();
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js").catch((e) => console.error("SW gagal:", e));
+  });
+}
