@@ -49,6 +49,12 @@
             <div class="hero-label-row">
               <div class="hero-label">Saldo total</div>
               <button class="btn-mini" onclick="openBalanceForm(false)">Atur saldo awal</button>
+              <button class="eye-btn" id="privacyToggleBtn" onclick="togglePrivacy()" aria-label="Sembunyikan saldo" title="Sembunyikan saldo">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M1 12s3-8 11-8 11 8 11 8-3 8-11 8-11-8-11-8z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
             </div>
             <div id="totalBalance" class="serif mono hero-balance">Rp0</div>
           </div>
@@ -227,7 +233,12 @@
           <div class="help-item">
             <div class="help-title">Cara Download Buku Kas</div>
             <div class="help-text">
-              Salin Link dan copy di <strong>Google Crome</strong>. jika sudah masuk ke tampilan Buku Kas , klik tititk 3 di pojok atas dan pilih<strong> Instal dan Buat Pintasan</strong>. dan tunggu aplikasi akan muncul di beranda kamu
+              <strong>Di Android:</strong> Buka link Buku Kas ini lewat <strong>Google Chrome</strong>. Setelah tampilan Buku Kas muncul, tap ikon titik tiga di pojok kanan atas, lalu pilih <strong>"Instal aplikasi"</strong> atau
+              <strong>"Tambahkan ke Layar Utama"</strong>. Tunggu sebentar, ikonnya akan muncul di beranda HP kamu.
+            </div>
+            <div class="help-text" style="margin-top: 10px">
+              <strong>Di iPhone (iOS):</strong> Buka link Buku Kas ini lewat <strong>Safari</strong> (bukan Chrome). Tap ikon Share (kotak dengan panah ke atas) di bagian bawah layar, scroll ke bawah, pilih
+              <strong>"Add to Home Screen"</strong>, lalu tap <strong>"Add"</strong>. Ikon Buku Kas akan muncul di layar utama HP kamu.
             </div>
           </div>
           <div class="help-item">

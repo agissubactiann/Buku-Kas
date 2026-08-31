@@ -9,10 +9,12 @@ const STORAGE_KEY = "buku-kas-transactions";
 const NAME_KEY = "buku-kas-username";
 const BALANCE_KEY = "buku-kas-saldo-awal";
 const BALANCE_SET_KEY = "buku-kas-saldo-set";
+const PRIVACY_KEY = "buku-kas-privacy";
 
 let userName = "";
 let startingBalance = 0;
 let balanceSet = false;
+let privacyHidden = false;
 let transactions = [];
 
 let activeTab = "harian"; // harian | mingguan | bulanan | history
@@ -81,6 +83,34 @@ function shakeEl(el) {
   el.classList.remove("shake");
   void el.offsetWidth;
   el.classList.add("shake");
+}
+
+/* ---------- privasi saldo ---------- */
+function loadPrivacy() {
+  try {
+    privacyHidden = localStorage.getItem(PRIVACY_KEY) === "true";
+  } catch (e) {
+    privacyHidden = false;
+  }
+}
+function togglePrivacy() {
+  privacyHidden = !privacyHidden;
+  try {
+    localStorage.setItem(PRIVACY_KEY, String(privacyHidden));
+  } catch (e) {
+    console.error("Gagal menyimpan preferensi privasi", e);
+  }
+  updateEyeIcon();
+  renderTotalBalance();
+}
+function updateEyeIcon() {
+  const btn = document.getElementById("privacyToggleBtn");
+  if (!btn) return;
+  btn.setAttribute("aria-label", privacyHidden ? "Tampilkan saldo" : "Sembunyikan saldo");
+  btn.setAttribute("title", privacyHidden ? "Tampilkan saldo" : "Sembunyikan saldo");
+  btn.innerHTML = privacyHidden
+    ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-10-8-10-8a18.34 18.34 0 0 1 4.22-5.94M9.9 4.24A10.4 10.4 0 0 1 12 4c7 0 10 8 10 8a18.28 18.28 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+    : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M1 12s3-8 11-8 11 8 11 8-3 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
 }
 
 /* ---------- nama pengguna ---------- */
@@ -265,10 +295,23 @@ function renderTotalBalance() {
   const monthExpense = monthTx.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
 
   const balEl = document.getElementById("totalBalance");
-  animateNumberText(balEl, totalBalance);
+  const incEl = document.getElementById("allIncome");
+  const expEl = document.getElementById("allExpense");
+  const MASK = "Rp••••••••";
+
+  if (privacyHidden) {
+    balEl.textContent = MASK;
+    balEl.dataset.rawValue = totalBalance;
+    incEl.textContent = MASK;
+    incEl.dataset.rawValue = monthIncome;
+    expEl.textContent = MASK;
+    expEl.dataset.rawValue = monthExpense;
+  } else {
+    animateNumberText(balEl, totalBalance);
+    animateNumberText(incEl, monthIncome);
+    animateNumberText(expEl, monthExpense);
+  }
   balEl.style.color = totalBalance >= 0 ? "var(--ink)" : "var(--expense)";
-  animateNumberText(document.getElementById("allIncome"), monthIncome);
-  animateNumberText(document.getElementById("allExpense"), monthExpense);
 }
 
 /* ---------- ledger row renderer (dipakai di semua tempat) ---------- */
@@ -709,6 +752,8 @@ function init() {
   loadName();
   updateBrandTitle();
   loadBalance();
+  loadPrivacy();
+  updateEyeIcon();
   loadData();
   historySelectedDate = null;
   setFormType("expense");

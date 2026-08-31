@@ -1144,3 +1144,23 @@ header {
     gap: 6px;
   }
 }
+
+/* === Tombol mata (privasi saldo) === */
+.eye-btn {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  color: var(--ink);
+  cursor: pointer;
+  padding: 4px 7px;
+  box-shadow: 2px 2px 0 var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    transform 0.08s,
+    box-shadow 0.08s;
+}
+.eye-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--border);
+}
