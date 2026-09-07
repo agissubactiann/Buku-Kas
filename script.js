@@ -30,6 +30,19 @@ let historySelectedDate = null;
 let historyMonthsYear = new Date().getFullYear();
 let historySelectedMonth = null; // {year, month(0-11)}
 
+/* ---------- kalkulator alokasi ---------- */
+let lainnyaView = "menu"; // menu | kalkulator
+let calcSource = "gaji"; // gaji | bisnis
+let calcPeriod = "bulanan"; // mingguan | 2mingguan | bulanan
+let calcIncome = 0;
+let calcRows = [
+  { id: uid(), name: "Tagihan", pct: 30 },
+  { id: uid(), name: "Makan", pct: 25 },
+  { id: uid(), name: "Tabungan", pct: 20 },
+  { id: uid(), name: "Liburan", pct: 15 },
+  { id: uid(), name: "Lainnya", pct: 10 },
+];
+
 /* ---------- helpers ---------- */
 function toISO(d) {
   const off = d.getTimezoneOffset();
@@ -244,6 +257,114 @@ function closeHelpModal() {
   document.getElementById("helpOverlay").classList.remove("open");
 }
 
+/* ---------- modal segera hadir (Mode Berdua) ---------- */
+function openComingSoonModal() {
+  document.getElementById("comingSoonOverlay").classList.add("open");
+}
+function closeComingSoonModal() {
+  document.getElementById("comingSoonOverlay").classList.remove("open");
+}
+
+/* ---------- modal pengingat tab Lainnya ---------- */
+function openLainnyaNotice() {
+  document.getElementById("lainnyaNoticeOverlay").classList.add("open");
+}
+function closeLainnyaNotice() {
+  document.getElementById("lainnyaNoticeOverlay").classList.remove("open");
+}
+
+/* ---------- tab Lainnya: kalkulator alokasi ---------- */
+function showLainnyaView(view) {
+  lainnyaView = view;
+  document.getElementById("lainnyaMenu").style.display = view === "menu" ? "block" : "none";
+  document.getElementById("lainnyaKalkulator").style.display = view === "kalkulator" ? "block" : "none";
+  if (view === "kalkulator") {
+    renderCalcRows();
+  }
+}
+
+function setCalcSource(src) {
+  calcSource = src;
+  document.getElementById("calcSrcGaji").classList.toggle("active", src === "gaji");
+  document.getElementById("calcSrcBisnis").classList.toggle("active", src === "bisnis");
+}
+
+function setCalcPeriod(period) {
+  calcPeriod = period;
+}
+
+function handleCalcIncomeInput() {
+  const raw = document.getElementById("calcIncomeInput").value;
+  calcIncome = raw === "" ? 0 : parseFloat(raw);
+  if (isNaN(calcIncome)) calcIncome = 0;
+  renderCalcRows();
+}
+
+function addCalcRow() {
+  calcRows.push({ id: uid(), name: "", pct: 0 });
+  renderCalcRows();
+}
+
+function removeCalcRow(id) {
+  calcRows = calcRows.filter((r) => r.id !== id);
+  renderCalcRows();
+}
+
+function updateCalcRowName(id, val) {
+  const row = calcRows.find((r) => r.id === id);
+  if (row) row.name = val;
+}
+
+function updateCalcRowPct(id, val) {
+  const row = calcRows.find((r) => r.id === id);
+  if (row) row.pct = val === "" ? 0 : parseFloat(val) || 0;
+  renderCalcSummaryOnly();
+}
+
+function renderCalcRows() {
+  const wrap = document.getElementById("calcRowsWrap");
+  wrap.innerHTML = calcRows
+    .map(
+      (r) => `
+    <div class="calc-row">
+      <input type="text" placeholder="Nama kebutuhan" value="${escapeHtml(r.name)}" oninput="updateCalcRowName('${r.id}', this.value)">
+      <input type="number" min="0" max="100" value="${r.pct}" oninput="updateCalcRowPct('${r.id}', this.value); refreshCalcRowRp('${r.id}')" id="calcPct-${r.id}">
+      <div class="calc-row-rp" id="calcRp-${r.id}">${formatIDR((calcIncome * r.pct) / 100)}</div>
+      <button type="button" class="calc-row-del" onclick="removeCalcRow('${r.id}')" aria-label="Hapus"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6h14z"/></svg></button>
+    </div>`,
+    )
+    .join("");
+  renderCalcSummaryOnly();
+}
+
+function refreshCalcRowRp(id) {
+  const row = calcRows.find((r) => r.id === id);
+  const el = document.getElementById("calcRp-" + id);
+  if (row && el) el.textContent = formatIDR((calcIncome * row.pct) / 100);
+}
+
+function renderCalcSummaryOnly() {
+  calcRows.forEach((r) => refreshCalcRowRp(r.id));
+  const totalPct = calcRows.reduce((s, r) => s + (r.pct || 0), 0);
+  const totalRp = (calcIncome * totalPct) / 100;
+  const remainingPct = 100 - totalPct;
+  const remainingRp = calcIncome - totalRp;
+  let statusColor = "var(--income)";
+  let statusLabel = "Pas 100%";
+  if (remainingPct > 0.001) {
+    statusColor = "var(--accent)";
+    statusLabel = "Belum penuh";
+  } else if (remainingPct < -0.001) {
+    statusColor = "var(--expense)";
+    statusLabel = "Melebihi 100%";
+  }
+  document.getElementById("calcSummary").innerHTML = `
+    <div class="item"><div class="l">Total dialokasikan</div><div class="v">${totalPct.toFixed(0)}% &middot; ${formatIDR(totalRp)}</div></div>
+    <div class="item"><div class="l">Sisa</div><div class="v" style="color:${remainingPct < 0 ? "var(--expense)" : "var(--ink)"}">${remainingPct.toFixed(0)}% &middot; ${formatIDR(remainingRp)}</div></div>
+    <div class="item"><div class="l">Status</div><div class="v" style="color:${statusColor}">${statusLabel}</div></div>
+  `;
+}
+
 /* ---------- data storage ---------- */
 function loadData() {
   try {
@@ -264,15 +385,20 @@ function saveData() {
 /* ---------- tab utama ---------- */
 function setTab(tab) {
   activeTab = tab;
-  ["Harian", "Mingguan", "Bulanan", "History"].forEach((t) => {
+  ["Harian", "Mingguan", "Bulanan", "History", "Lainnya"].forEach((t) => {
     document.getElementById("tab" + t).classList.toggle("active", t.toLowerCase() === tab);
   });
   document.getElementById("panelHarian").style.display = tab === "harian" ? "block" : "none";
   document.getElementById("panelMingguan").style.display = tab === "mingguan" ? "block" : "none";
   document.getElementById("panelBulanan").style.display = tab === "bulanan" ? "block" : "none";
   document.getElementById("panelHistory").style.display = tab === "history" ? "block" : "none";
-  document.getElementById("addTxBtn").style.display = tab === "history" ? "none" : "flex";
-  if (tab !== "history") pendingSource = tab;
+  document.getElementById("panelLainnya").style.display = tab === "lainnya" ? "block" : "none";
+  document.getElementById("addTxBtn").style.display = tab === "history" || tab === "lainnya" ? "none" : "flex";
+  if (tab !== "history" && tab !== "lainnya") pendingSource = tab;
+  if (tab === "lainnya") {
+    showLainnyaView("menu");
+    openLainnyaNotice();
+  }
   renderCurrentView();
 }
 

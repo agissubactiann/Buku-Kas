@@ -89,6 +89,14 @@
           <button class="tab-btn" id="tabMingguan" onclick="setTab('mingguan')">Mingguan</button>
           <button class="tab-btn" id="tabBulanan" onclick="setTab('bulanan')">Bulanan</button>
           <button class="tab-btn" id="tabHistory" onclick="setTab('history')">History</button>
+          <button class="tab-btn" id="tabLainnya" onclick="setTab('lainnya')">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 5px; vertical-align: -2px">
+              <rect x="3" y="3" width="8" height="8" rx="1.5" />
+              <rect x="13" y="3" width="8" height="8" rx="1.5" />
+              <rect x="3" y="13" width="8" height="8" rx="1.5" />
+              <rect x="13" y="13" width="8" height="8" rx="1.5" /></svg
+            >Lainnya
+          </button>
         </div>
         <button class="btn-gold" id="addTxBtn" onclick="openAddForm()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14" /></svg>
@@ -168,7 +176,116 @@
         </div>
       </section>
 
+      <!-- PANEL: LAINNYA -->
+      <section class="panel" id="panelLainnya" style="display: none">
+        <div id="lainnyaMenu">
+          <div class="section-label">Menu lainnya</div>
+          <div class="app-grid">
+            <button type="button" class="app-tile" onclick="showLainnyaView('kalkulator')">
+              <div class="app-tile-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="4" y="2" width="16" height="20" rx="2" />
+                  <line x1="8" y1="6" x2="16" y2="6" />
+                  <line x1="8" y1="10" x2="8" y2="10.01" />
+                  <line x1="12" y1="10" x2="12" y2="10.01" />
+                  <line x1="16" y1="10" x2="16" y2="10.01" />
+                  <line x1="8" y1="14" x2="8" y2="14.01" />
+                  <line x1="12" y1="14" x2="12" y2="14.01" />
+                  <line x1="16" y1="14" x2="16" y2="14.01" />
+                  <line x1="8" y1="18" x2="16" y2="18" />
+                </svg>
+              </div>
+              <div class="app-tile-label">Kalkulator</div>
+            </button>
+            <button type="button" class="app-tile" onclick="openComingSoonModal()">
+              <div class="app-tile-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+              </div>
+              <div class="app-tile-label">Jurnal Bareng</div>
+              <div class="app-tile-badge">Segera hadir</div>
+            </button>
+          </div>
+        </div>
+
+        <div id="lainnyaKalkulator" style="display: none">
+          <button class="btn-ghost" style="margin-bottom: 18px" onclick="showLainnyaView('menu')">&larr; Kembali</button>
+
+          <div class="section-label">Sumber pendapatan</div>
+          <div class="type-toggle" style="margin-bottom: 18px">
+            <button type="button" class="income active" id="calcSrcGaji" onclick="setCalcSource('gaji')">Gaji</button>
+            <button type="button" class="income" id="calcSrcBisnis" onclick="setCalcSource('bisnis')">Bisnis</button>
+          </div>
+
+          <div class="field-row" style="margin-bottom: 4px">
+            <div class="field">
+              <label>Nominal pendapatan (Rp)</label>
+              <input type="number" min="0" placeholder="5000000" id="calcIncomeInput" oninput="handleCalcIncomeInput()" />
+            </div>
+            <div class="field">
+              <label>Periode</label>
+              <select id="calcPeriodInput" onchange="setCalcPeriod(this.value)">
+                <option value="mingguan">Mingguan</option>
+                <option value="2mingguan">2 Mingguan</option>
+                <option value="bulanan" selected>Bulanan</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="section-label" style="margin-top: 22px">Alokasi kebutuhan</div>
+          <div id="calcRowsWrap"></div>
+          <button type="button" class="btn-ghost" style="margin-top: 4px" onclick="addCalcRow()">+ Tambah kebutuhan</button>
+
+          <div class="calc-summary" id="calcSummary"></div>
+        </div>
+      </section>
+
       <footer class="site-footer">&copy; <span id="footerYear"></span> Buku Kas. Seluruh hak cipta dilindungi.@AGIISSS._</footer>
+    </div>
+
+    <div class="modal-overlay" id="lainnyaNoticeOverlay" onclick="if (event.target === this) closeLainnyaNotice();">
+      <div class="modal" style="max-width: 380px">
+        <div class="modal-head">
+          <div class="t serif">Perhatian</div>
+          <button type="button" onclick="closeLainnyaNotice()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <p style="font-size: 13px; color: var(--ink-muted); line-height: 1.6; margin: 0 0 18px">
+          Sebelum menggunakan semua fitur yang ada di menu <strong>Lainnya</strong>, harap baca dulu cara pemakaian setiap fiturnya, biar ga bingung pas nyobain. Jangan malas baca yahh... bangst
+        </p>
+        <button
+          type="button"
+          class="btn-gold"
+          style="width: 100%; justify-content: center; margin-bottom: 8px"
+          onclick="
+            closeLainnyaNotice();
+            openHelpModal();
+          "
+        >
+          Lihat Cara Pakai
+        </button>
+        <button type="button" onclick="closeLainnyaNotice()" style="width: 100%; background: none; border: none; color: var(--ink-muted); font-size: 12px; text-decoration: underline; cursor: pointer; padding: 4px">Lanjutkan</button>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="comingSoonOverlay" onclick="if (event.target === this) closeComingSoonModal();">
+      <div class="modal" style="max-width: 380px">
+        <div class="modal-head">
+          <div class="t serif">Jurnal Bareng</div>
+          <button type="button" onclick="closeComingSoonModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <p style="font-size: 13px; color: var(--ink-muted); line-height: 1.6; margin: 0">
+          Fitur ini lagi disiapkan sabar yahh.. bangst &mdash; nanti kamu bisa bikin kode berbagi, untuk (pasangan, keluarga, teman, atau Selingkuhan) masukin kode yang sudah kamu buat ke HP mereka, biar catatan keuangan kalian nyambung dan
+          kelihatan bareng-bareng. Tunggu update selanjutnya ya!
+        </p>
+      </div>
     </div>
 
     <div class="modal-overlay" id="nameOverlay">
@@ -267,6 +384,14 @@
             <div class="help-text">
               Rekap semua bulan dalam satu tahun. Klik satu bulan untuk melihat total, rincian kategori, dan kurva performa keuangan bulan itu. Kurva ini otomatis "reset" tiap ganti bulan, tapi riwayat bulan lama tetap bisa dibuka lagi
               lewat sini.
+            </div>
+          </div>
+          <div class="help-item">
+            <div class="help-title">Tab Lainnya &mdash; Kalkulator</div>
+            <div class="help-text">
+              Ini buat bantu kamu rencanain uang yang baru masuk sebelum dipakai. Caranya: pilih dulu uangnya dari Gaji atau Bisnis, masukin jumlahnya, terus tentuin ini buat sebulan/2 minggu/seminggu. Setelah itu, bagi-bagi uangnya pakai
+              persen ke kebutuhan kamu &mdash; misalnya Tagihan 30%, Makan 25%, Tabungan 20%, dan seterusnya (udah ada contohnya, tinggal kamu ubah sesuai kebutuhan). Nanti langsung kelihatan berapa Rupiah tiap kebutuhan itu, dan apakah
+              alokasinya udah pas 100% atau masih ada sisa.
             </div>
           </div>
           <div class="help-item">
