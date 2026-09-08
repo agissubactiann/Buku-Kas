@@ -152,7 +152,7 @@ function openNameForm(isRename) {
   document.getElementById("nameModalTitle").textContent = isRename ? "Ubah nama" : "Selamat datang";
   document.getElementById("nameModalDesc").textContent = isRename
     ? "Hayoo... Mau Ganti Nama Lagi Yahh...?"
-    : "Siapa nama pemilik buku kas ini? Sekalian catat saldo yang sudah kamu punya sekarang biar Saldo Total langsung akurat (boleh dilewati).";
+    : "Siapa nama pemilik buku kas ini? Sekalian catat saldo yang sudah kamu punya sekarang (JIKA PUNYA UANG Aihihihi....) biar Saldo Total langsung akurat (boleh dilewati).";
   document.getElementById("nameCloseBtn").style.display = isRename ? "block" : "none";
   const showBalanceField = !isRename && !balanceSet;
   document.getElementById("startBalanceFieldWrap").style.display = showBalanceField ? "block" : "none";
@@ -363,6 +363,49 @@ function renderCalcSummaryOnly() {
     <div class="item"><div class="l">Sisa</div><div class="v" style="color:${remainingPct < 0 ? "var(--expense)" : "var(--ink)"}">${remainingPct.toFixed(0)}% &middot; ${formatIDR(remainingRp)}</div></div>
     <div class="item"><div class="l">Status</div><div class="v" style="color:${statusColor}">${statusLabel}</div></div>
   `;
+}
+
+/* ---------- struk hasil kalkulator ---------- */
+function generateReceipt() {
+  const totalPct = calcRows.reduce((s, r) => s + (r.pct || 0), 0);
+  const totalRp = (calcIncome * totalPct) / 100;
+  const remainingPct = 100 - totalPct;
+  const remainingRp = calcIncome - totalRp;
+  const periodLabel = calcPeriod === "mingguan" ? "Mingguan" : calcPeriod === "2mingguan" ? "2 Mingguan" : "Bulanan";
+  const sourceLabel = calcSource === "gaji" ? "Gaji" : "Bisnis";
+  const todayLabel = new Date().toLocaleDateString("id-ID", { weekday: "long", day: "2-digit", month: "long", year: "numeric" });
+
+  document.getElementById("receiptMeta").innerHTML = `
+    <div class="receipt-meta-row"><span class="l">Tanggal</span><span class="v">${todayLabel}</span></div>
+    <div class="receipt-meta-row"><span class="l">Sumber</span><span class="v">${sourceLabel}</span></div>
+    <div class="receipt-meta-row"><span class="l">Periode</span><span class="v">${periodLabel}</span></div>
+    <div class="receipt-meta-row"><span class="l">Nominal</span><span class="v">${formatIDR(calcIncome)}</span></div>
+  `;
+
+  const validRows = calcRows.filter((r) => r.name.trim());
+  document.getElementById("receiptRows").innerHTML =
+    validRows.length === 0
+      ? `<div style="text-align:center;font-size:12px;color:var(--ink-muted)">Belum ada alokasi diisi.</div>`
+      : validRows
+          .map(
+            (r) => `
+      <div class="receipt-item">
+        <div class="top"><span>${escapeHtml(r.name)}</span><span>${formatIDR((calcIncome * r.pct) / 100)}</span></div>
+        <div class="sub">${r.pct}% dari pendapatan</div>
+      </div>`,
+          )
+          .join("");
+
+  document.getElementById("receiptTotals").innerHTML = `
+    <div class="receipt-totals-row"><span>Total dialokasikan</span><span>${totalPct.toFixed(0)}%</span></div>
+    <div class="receipt-totals-row"><span>Sisa</span><span>${remainingPct.toFixed(0)}% &middot; ${formatIDR(remainingRp)}</span></div>
+    <div class="receipt-totals-row grand"><span>TOTAL</span><span>${formatIDR(totalRp)}</span></div>
+  `;
+
+  document.getElementById("receiptOverlay").classList.add("open");
+}
+function closeReceipt() {
+  document.getElementById("receiptOverlay").classList.remove("open");
 }
 
 /* ---------- data storage ---------- */

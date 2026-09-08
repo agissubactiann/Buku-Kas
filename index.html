@@ -241,10 +241,33 @@
           <button type="button" class="btn-ghost" style="margin-top: 4px" onclick="addCalcRow()">+ Tambah kebutuhan</button>
 
           <div class="calc-summary" id="calcSummary"></div>
+          <button type="button" class="btn-gold" style="width: 100%; justify-content: center; margin-top: 16px" onclick="generateReceipt()">Generate Struk</button>
         </div>
       </section>
 
       <footer class="site-footer">&copy; <span id="footerYear"></span> Buku Kas. Seluruh hak cipta dilindungi.@AGIISSS._</footer>
+    </div>
+
+    <div class="modal-overlay" id="receiptOverlay" onclick="if (event.target === this) closeReceipt();">
+      <div class="receipt-paper">
+        <div class="receipt-zigzag-top"></div>
+        <div class="receipt-body">
+          <div class="receipt-header">
+            <div class="receipt-title">STRUK ALOKASI</div>
+            <div class="receipt-sub">Buku Kas &mdash; Kalkulator</div>
+          </div>
+          <div class="receipt-dashed"></div>
+          <div id="receiptMeta"></div>
+          <div class="receipt-dashed"></div>
+          <div id="receiptRows"></div>
+          <div class="receipt-dashed"></div>
+          <div id="receiptTotals"></div>
+          <div class="receipt-dashed"></div>
+          <div class="receipt-footer">Terima kasih sudah merencanakan keuanganmu!</div>
+        </div>
+        <div class="receipt-zigzag-bottom"></div>
+      </div>
+      <button type="button" class="btn-gold" style="margin-top: 16px; justify-content: center" onclick="closeReceipt()">Tutup</button>
     </div>
 
     <div class="modal-overlay" id="lainnyaNoticeOverlay" onclick="if (event.target === this) closeLainnyaNotice();">
@@ -256,7 +279,7 @@
           </button>
         </div>
         <p style="font-size: 13px; color: var(--ink-muted); line-height: 1.6; margin: 0 0 18px">
-          Sebelum menggunakan semua fitur yang ada di menu <strong>Lainnya</strong>, harap baca dulu cara pemakaian setiap fiturnya, biar ga bingung pas nyobain. Jangan malas baca yahh... bangst
+          Sebelum menggunakan semua fitur yang ada di menu Lainnya, harap baca dulu cara pemakaian setiap fiturnya, biar ga bingung pas nyobain. Jangan malas baca yahh... Nanti Kamu bodoh.
         </p>
         <button
           type="button"
@@ -282,7 +305,7 @@
           </button>
         </div>
         <p style="font-size: 13px; color: var(--ink-muted); line-height: 1.6; margin: 0">
-          Fitur ini lagi disiapkan sabar yahh.. bangst &mdash; nanti kamu bisa bikin kode berbagi, untuk (pasangan, keluarga, teman, atau Selingkuhan) masukin kode yang sudah kamu buat ke HP mereka, biar catatan keuangan kalian nyambung dan
+          Fitur ini lagi disiapkan sabar yahh.. bangst — nanti kamu bisa bikin kode berbagi, untuk (pasangan, keluarga, teman, atau Selingkuhan) masukin kode yang sudah kamu buat ke HP mereka, biar catatan keuangan kalian nyambung dan
           kelihatan bareng-bareng. Tunggu update selanjutnya ya!
         </p>
       </div>
@@ -319,7 +342,7 @@
           </button>
         </div>
         <p id="balanceModalDesc" style="font-size: 13px; color: var(--ink-muted); margin: 0 0 16px">
-          Masukkan saldo yang kamu punya di rekening (di luar catatan transaksi). Ini cuma ditambahkan ke Saldo Total, dan tidak akan muncul di catatan Harian/Mingguan/Bulanan.
+          Masukkan saldo yang kamu punya di rekening "jika punya uang" aihihi... (di luar catatan transaksi). Ini cuma ditambahkan ke Saldo Total, dan tidak akan muncul di catatan Harian/Mingguan/Bulanan.
         </p>
         <div class="field">
           <label>Saldo saat ini (Rp)</label>

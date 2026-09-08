@@ -1295,3 +1295,91 @@ header {
   font-weight: 600;
   margin-top: 14px;
 }
+
+/* === Modal struk kalkulator === */
+#receiptOverlay {
+  flex-direction: column;
+}
+.receipt-paper {
+  width: 100%;
+  max-width: 340px;
+  background: #fffdf5;
+  filter: drop-shadow(6px 6px 0 var(--border));
+}
+.receipt-zigzag-top,
+.receipt-zigzag-bottom {
+  height: 12px;
+  background: linear-gradient(135deg, #fffdf5 50%, transparent 50%), linear-gradient(45deg, #fffdf5 50%, transparent 50%);
+  background-size: 16px 16px;
+  background-position: 0 0;
+}
+.receipt-zigzag-top {
+  background: linear-gradient(-135deg, #fffdf5 50%, transparent 50%), linear-gradient(-45deg, #fffdf5 50%, transparent 50%);
+  background-size: 16px 16px;
+}
+.receipt-body {
+  padding: 22px 20px;
+  font-family: "Space Mono", monospace;
+  color: var(--ink);
+}
+.receipt-header {
+  text-align: center;
+  margin-bottom: 4px;
+}
+.receipt-title {
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 1px;
+}
+.receipt-sub {
+  font-size: 10px;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.receipt-dashed {
+  border-top: 2px dashed var(--border);
+  margin: 12px 0;
+}
+.receipt-meta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+.receipt-meta-row .l {
+  color: var(--ink-muted);
+}
+.receipt-meta-row .v {
+  font-weight: 700;
+}
+.receipt-item {
+  margin-bottom: 8px;
+}
+.receipt-item .top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 700;
+}
+.receipt-item .sub {
+  font-size: 10px;
+  color: var(--ink-muted);
+}
+.receipt-totals-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+.receipt-totals-row.grand {
+  font-size: 14px;
+  font-weight: 700;
+  margin-top: 6px;
+}
+.receipt-footer {
+  text-align: center;
+  font-size: 10px;
+  color: var(--ink-muted);
+  margin-top: 4px;
+}
